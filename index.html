@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Credit Card Payoff Calculator</title>
 
-  <!-- Google AdSense (verification code) -->
+  <!-- Google AdSense verification meta tag -->
+  <meta name="google-adsense-account" content="ca-pub-5315525753847749">
+
+  <!-- Google AdSense script for ads -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749"
           crossorigin="anonymous"></script>
 
@@ -195,7 +198,6 @@
       const payoffDate = new Date(document.getElementById('payoffDate').value);
       const today = new Date();
 
-      // Calculate months until payoff
       const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear()) * 12 +
                   (payoffDate.getMonth() - today.getMonth())));
 
@@ -203,7 +205,6 @@
       const monthlyPayment = (monthlyRate * balance) / (1 - Math.pow(1 + monthlyRate, -months));
       const extraPayment = monthlyPayment - minPayment;
 
-      // Calculate total interest
       let remainingBalance = balance;
       let totalInterest = 0;
       for(let i=0; i<months; i++){
@@ -216,7 +217,6 @@
       extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
       totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
 
-      // Generate chart
       const labels = [];
       const data = [];
       let balanceChart = balance;
