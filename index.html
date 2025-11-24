@@ -4,8 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Credit Card Payoff Calculator</title>
+
+  <!-- Google AdSense (verification code) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749"
+          crossorigin="anonymous"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -14,49 +19,38 @@
       margin: 0;
       padding: 0;
     }
-    .wrapper {
+
+    .container-wrapper {
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
-      padding: 50px 10px;
-      flex-wrap: wrap;
+      margin: 20px;
     }
+
     .ad {
       width: 120px;
-      background: #f0f0f0;
+      margin: 10px;
       text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      color: #555;
-      flex-shrink: 0;
     }
+
     .container {
       max-width: 600px;
       background: #fff;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      flex-grow: 1;
-      min-width: 300px;
     }
+
     h1 {
       text-align: center;
       color: #0073e6;
     }
-    h2 {
-      color: #0073e6;
-      margin-top: 0;
-    }
-    p {
-      margin: 5px 0;
-    }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
+
     input {
       width: 100%;
       padding: 10px;
@@ -65,6 +59,7 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
+
     button {
       width: 100%;
       padding: 15px;
@@ -76,60 +71,71 @@
       margin-top: 20px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #005bb5;
     }
+
     .instructions {
-      background: #e6f0ff;
+      margin-top: 20px;
+      background: #f0f4ff;
       padding: 15px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      font-size: 14px;
     }
+
     .results {
       margin-top: 30px;
-      background: #f0f4ff;
+      background: #e6f0ff;
       padding: 20px;
       border-radius: 8px;
     }
+
     canvas {
       margin-top: 20px;
     }
 
-    /* Responsive for small screens */
     @media (max-width: 900px) {
-      .wrapper {
+      .container-wrapper {
         flex-direction: column;
         align-items: center;
       }
+
       .ad {
-        width: 80%;
-        margin-bottom: 20px;
+        width: 100%;
       }
     }
   </style>
 </head>
-<body>
-  <div class="wrapper">
-    <div class="ad">Ad Placeholder (Left)</div>
 
+<body>
+
+  <div class="container-wrapper">
+    <!-- Left Ad -->
+    <div class="ad">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-5315525753847749"
+           data-ad-slot="1111111111"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    <!-- Main Content -->
     <div class="container">
       <h1>Credit Card Payoff Calculator</h1>
 
       <div class="instructions">
-        <h2>How It Works</h2>
-        <p>Enter your credit card details below:</p>
+        <strong>How it works:</strong>
         <ul>
-          <li><strong>Current Balance:</strong> The total amount you owe on your credit card.</li>
-          <li><strong>APR (%):</strong> The annual interest rate of your card.</li>
-          <li><strong>Minimum Payment:</strong> Your card’s minimum monthly payment.</li>
-          <li><strong>Target Payoff Date:</strong> The date by which you want your card paid off.</li>
-        </ul>
-        <p>Click <strong>Calculate</strong>, and you’ll see:</p>
-        <ul>
-          <li>The monthly payment required to reach your target date.</li>
-          <li>How much extra you’re paying above your minimum.</li>
-          <li>Total interest paid over the payoff period.</li>
-          <li>A chart showing how your debt decreases each month.</li>
+          <li>Enter your current credit card balance.</li>
+          <li>Enter your card APR (interest rate).</li>
+          <li>Enter your minimum monthly payment.</li>
+          <li>Enter the date you want to be debt-free by.</li>
+          <li>Click "Calculate" to see the required monthly payment and extra payment needed.</li>
         </ul>
       </div>
 
@@ -143,7 +149,7 @@
         <label for="minPayment">Minimum Payment ($)</label>
         <input type="number" step="0.01" id="minPayment" required>
 
-        <label for="payoffDate">Target Payoff Date</label>
+        <label for="payoffDate">Desired Payoff Date</label>
         <input type="date" id="payoffDate" required>
 
         <button type="submit">Calculate</button>
@@ -157,9 +163,21 @@
       </div>
     </div>
 
-    <div class="ad">Ad Placeholder (Right)</div>
+    <!-- Right Ad -->
+    <div class="ad">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-5315525753847749"
+           data-ad-slot="2222222222"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const form = document.getElementById('calculatorForm');
     const resultsDiv = document.getElementById('results');
@@ -177,10 +195,9 @@
       const payoffDate = new Date(document.getElementById('payoffDate').value);
       const today = new Date();
 
-      // Calculate number of months until payoff
-      let months = (payoffDate.getFullYear() - today.getFullYear()) * 12;
-      months += payoffDate.getMonth() - today.getMonth();
-      months = Math.max(1, months); // At least 1 month
+      // Calculate months until payoff
+      const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear()) * 12 +
+                  (payoffDate.getMonth() - today.getMonth())));
 
       const monthlyRate = apr / 12;
       const monthlyPayment = (monthlyRate * balance) / (1 - Math.pow(1 + monthlyRate, -months));
@@ -226,12 +243,8 @@
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            y: { beginAtZero: true }
-          }
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } }
         }
       });
 
