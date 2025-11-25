@@ -105,139 +105,139 @@ canvas { margin-top:20px; }
 </div>
 
 <script>
-const form = document.getElementById('calculatorForm');
-const resultsDiv = document.getElementById('results');
-const monthlyPaymentEl = document.getElementById('monthlyPayment');
-const extraPaymentEl = document.getElementById('extraPayment');
-const totalInterestEl = document.getElementById('totalInterest');
+window.addEventListener('load', () => {
+  const form = document.getElementById('calculatorForm');
+  const resultsDiv = document.getElementById('results');
+  const monthlyPaymentEl = document.getElementById('monthlyPayment');
+  const extraPaymentEl = document.getElementById('extraPayment');
+  const totalInterestEl = document.getElementById('totalInterest');
+  const funHookEl = document.getElementById('funHook');
 
-let lineChart, stackedChart;
+  let lineChart, stackedChart;
 
-form.addEventListener('submit', function(e){
-e.preventDefault();
+  // Calculator submit
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
 
-const balance = parseFloat(document.getElementById('balance').value);
-const apr = parseFloat(document.getElementById('apr').value)/100;
-const minPayment = parseFloat(document.getElementById('minPayment').value);
-const payoffDate = new Date(document.getElementById('payoffDate').value);
-const today = new Date();
+    const balance = parseFloat(document.getElementById('balance').value);
+    const apr = parseFloat(document.getElementById('apr').value)/100;
+    const minPayment = parseFloat(document.getElementById('minPayment').value);
+    const payoffDate = new Date(document.getElementById('payoffDate').value);
+    const today = new Date();
 
-const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear())*12 + (payoffDate.getMonth() - today.getMonth())));
-const monthlyRate = apr/12;
-const monthlyPayment = (monthlyRate*balance)/(1 - Math.pow(1+monthlyRate, -months));
-const extraPayment = monthlyPayment - minPayment;
+    const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear())*12 + (payoffDate.getMonth() - today.getMonth())));
+    const monthlyRate = apr/12;
+    const monthlyPayment = (monthlyRate*balance)/(1 - Math.pow(1+monthlyRate, -months));
+    const extraPayment = monthlyPayment - minPayment;
 
-let remaining = balance;
-let totalInterest = 0;
-const balanceData = [];
-const principalData = [];
-const interestData = [];
+    let remaining = balance;
+    let totalInterest = 0;
+    const balanceData = [];
+    const principalData = [];
+    const interestData = [];
 
-for(let i=0;i<months;i++){
-  const interest = remaining*monthlyRate;
-  const principal = monthlyPayment - interest;
-  totalInterest += interest;
-  remaining -= principal;
-  balanceData.push(remaining>0?remaining:0);
-  principalData.push(principal);
-  interestData.push(interest);
-}
+    for(let i=0;i<months;i++){
+      const interest = remaining*monthlyRate;
+      const principal = monthlyPayment - interest;
+      totalInterest += interest;
+      remaining -= principal;
+      balanceData.push(remaining>0?remaining:0);
+      principalData.push(principal);
+      interestData.push(interest);
+    }
 
-monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
-extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
-totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
-document.getElementById('funHook').textContent = `Paying just $${extraPayment.toFixed(2)} extra/month can get you debt-free faster!`;
+    monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
+    extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
+    totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
+    funHookEl.textContent = `Paying just $${extraPayment.toFixed(2)} extra/month can get you debt-free faster!`;
 
-const labels = balanceData.map((_,i)=>`Month ${i+1}`);
+    const labels = balanceData.map((_,i)=>`Month ${i+1}`);
 
-// Line chart (remaining balance)
-if(lineChart) lineChart.destroy();
-const ctxLine = document.getElementById('payoffChart').getContext('2d');
-lineChart = new Chart(ctxLine,{
-type:'line',
-data:{ labels:labels, datasets:[{ label:'Remaining Balance', data:balanceData, borderColor:'#0073e6', fill:true, backgroundColor:'rgba(0,115,230,0.1)', tension:0.3 }] },
-options:{ responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
-});
+    // Line chart
+    if(lineChart) lineChart.destroy();
+    const ctxLine = document.getElementById('payoffChart').getContext('2d');
+    lineChart = new Chart(ctxLine,{
+      type:'line',
+      data:{ labels:labels, datasets:[{ label:'Remaining Balance', data:balanceData, borderColor:'#0073e6', fill:true, backgroundColor:'rgba(0,115,230,0.1)', tension:0.3 }] },
+      options:{ responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+    });
 
-// Stacked bar chart (principal vs interest)
-if(stackedChart) stackedChart.destroy();
-const ctxStack = document.getElementById('stackedChart').getContext('2d');
-stackedChart = new Chart(ctxStack,{
-type:'bar',
-data:{
-labels:labels,
-datasets:[
-{ label:'Principal', data:principalData, backgroundColor:'#0073e6' },
-{ label:'Interest', data:interestData, backgroundColor:'#ff9800' }
-]
-},
-options:{
-responsive:true,
-plugins:{legend:{position:'top'}},
-scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}}
-}
-});
+    // Stacked bar chart
+    if(stackedChart) stackedChart.destroy();
+    const ctxStack = document.getElementById('stackedChart').getContext('2d');
+    stackedChart = new Chart(ctxStack,{
+      type:'bar',
+      data:{
+        labels:labels,
+        datasets:[
+          { label:'Principal', data:principalData, backgroundColor:'#0073e6' },
+          { label:'Interest', data:interestData, backgroundColor:'#ff9800' }
+        ]
+      },
+      options:{
+        responsive:true,
+        plugins:{legend:{position:'top'}},
+        scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}}
+      }
+    });
 
-resultsDiv.style.display='block';
-});
+    resultsDiv.style.display='block';
+  });
 
-// Budget → payoff date
-document.getElementById('calcBudget').addEventListener('click', ()=>{
-const balance = parseFloat(document.getElementById('balance').value);
-const apr = parseFloat(document.getElementById('apr').value)/100;
-const monthlyRate = apr/12;
-let monthlyPay = parseFloat(document.getElementById('budgetPayment').value);
-if(monthlyPay <= balance*monthlyRate){ alert("Monthly payment too low to ever pay off debt!"); return; }
-let remaining = balance; let months = 0;
-while(remaining>0){ remaining = remaining + remaining*monthlyRate - monthlyPay; months++; }
-const today = new Date();
-const payoffDate = new Date(today.getFullYear(), today.getMonth()+months, today.getDate());
-document.getElementById('budgetResult').textContent = `You will be debt-free by: ${payoffDate.toDateString()}`;
-});
+  // Budget payoff
+  document.getElementById('calcBudget').addEventListener('click', ()=>{
+    const balance = parseFloat(document.getElementById('balance').value);
+    const apr = parseFloat(document.getElementById('apr').value)/100;
+    const monthlyRate = apr/12;
+    let monthlyPay = parseFloat(document.getElementById('budgetPayment').value);
+    if(monthlyPay <= balance*monthlyRate){ alert("Monthly payment too low to ever pay off debt!"); return; }
+    let remaining = balance; let months = 0;
+    while(remaining>0){ remaining = remaining + remaining*monthlyRate - monthlyPay; months++; }
+    const today = new Date();
+    const payoffDate = new Date(today.getFullYear(), today.getMonth()+months, today.getDate());
+    document.getElementById('budgetResult').textContent = `You will be debt-free by: ${payoffDate.toDateString()}`;
+  });
 
-// Download PDF
-document.getElementById('downloadPDF').addEventListener('click', ()=>{
-const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-doc.setFontSize(16); doc.text("Credit Card Payoff Plan", 20, 20);
-doc.setFontSize(12);
-doc.text(monthlyPaymentEl.textContent, 20, 40);
-doc.text(extraPaymentEl.textContent, 20, 50);
-doc.text(totalInterestEl.textContent, 20, 60);
+  // PDF download
+  document.getElementById('downloadPDF').addEventListener('click', ()=>{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(16); doc.text("Credit Card Payoff Plan", 20, 20);
+    doc.setFontSize(12);
+    doc.text(monthlyPaymentEl.textContent, 20, 40);
+    doc.text(extraPaymentEl.textContent, 20, 50);
+    doc.text(totalInterestEl.textContent, 20, 60);
+    ['payoffChart','stackedChart'].forEach((id, idx)=>{
+      const canvas = document.getElementById(id);
+      const imgData = canvas.toDataURL('image/png');
+      doc.addImage(imgData,'PNG',15,70 + idx*100,180,90);
+    });
+    doc.save('PayoffPlan.pdf');
+  });
 
-// Add charts to PDF
-[ 'payoffChart', 'stackedChart' ].forEach((id, idx)=>{
-const canvas = document.getElementById(id);
-const imgData = canvas.toDataURL('image/png');
-doc.addImage(imgData,'PNG',15,70 + idx*100,180,90);
-});
+  // Shareable link
+  document.getElementById('sharePlan').addEventListener('click', ()=>{
+    const balance = document.getElementById('balance').value;
+    const apr = document.getElementById('apr').value;
+    const minPayment = document.getElementById('minPayment').value;
+    const payoffDate = document.getElementById('payoffDate').value;
+    const shareURL = `${window.location.href.split('?')[0]}?balance=${balance}&apr=${apr}&minPayment=${minPayment}&payoffDate=${payoffDate}`;
+    prompt("Copy this link to share your plan:", shareURL);
+  });
 
-doc.save('PayoffPlan.pdf');
-});
+  // Learn More button
+  const learnBtn = document.getElementById('learnMoreTips');
+  if(learnBtn){
+    learnBtn.addEventListener('click', () => { window.location.href = 'tips.html'; });
+  }
 
-// Shareable link
-document.getElementById('sharePlan').addEventListener('click', ()=>{
-const balance = document.getElementById('balance').value;
-const apr = document.getElementById('apr').value;
-const minPayment = document.getElementById('minPayment').value;
-const payoffDate = document.getElementById('payoffDate').value;
-const shareURL = `${window.location.href.split('?')[0]}?balance=${balance}&apr=${apr}&minPayment=${minPayment}&payoffDate=${payoffDate}`;
-prompt("Copy this link to share your plan:", shareURL);
-});
-
-// Learn More button
-document.getElementById('learnMoreTips').addEventListener('click', ()=>{
-  window.location.href = 'tips.html';
-});
-
-// Auto-fill from URL
-window.addEventListener('load', ()=>{
-const params = new URLSearchParams(window.location.search);
-if(params.has('balance')) document.getElementById('balance').value = params.get('balance');
-if(params.has('apr')) document.getElementById('apr').value = params.get('apr');
-if(params.has('minPayment')) document.getElementById('minPayment').value = params.get('minPayment');
-if(params.has('payoffDate')) document.getElementById('payoffDate').value = params.get('payoffDate');
-if(params.has('balance')) form.dispatchEvent(new Event('submit'));
+  // Auto-fill from URL
+  const params = new URLSearchParams(window.location.search);
+  if(params.has('balance')) document.getElementById('balance').value = params.get('balance');
+  if(params.has('apr')) document.getElementById('apr').value = params.get('apr');
+  if(params.has('minPayment')) document.getElementById('minPayment').value = params.get('minPayment');
+  if(params.has('payoffDate')) document.getElementById('payoffDate').value = params.get('payoffDate');
+  if(params.has('balance')) form.dispatchEvent(new Event('submit'));
 });
 </script>
 </body>
