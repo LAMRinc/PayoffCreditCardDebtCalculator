@@ -12,7 +12,14 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749"
           crossorigin="anonymous"></script>
 
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     body {
@@ -22,19 +29,16 @@
       margin: 0;
       padding: 0;
     }
-
     .container-wrapper {
       display: flex;
       justify-content: center;
       margin: 20px;
     }
-
     .ad {
       width: 120px;
       margin: 10px;
       text-align: center;
     }
-
     .container {
       max-width: 600px;
       background: #fff;
@@ -42,18 +46,15 @@
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-
     h1 {
       text-align: center;
       color: #0073e6;
     }
-
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
-
     input {
       width: 100%;
       padding: 10px;
@@ -62,7 +63,6 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-
     button {
       width: 100%;
       padding: 15px;
@@ -74,11 +74,9 @@
       margin-top: 20px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #005bb5;
     }
-
     .instructions {
       margin-top: 20px;
       background: #f0f4ff;
@@ -86,24 +84,20 @@
       border-radius: 8px;
       font-size: 14px;
     }
-
     .results {
       margin-top: 30px;
       background: #e6f0ff;
       padding: 20px;
       border-radius: 8px;
     }
-
     canvas {
       margin-top: 20px;
     }
-
     @media (max-width: 900px) {
       .container-wrapper {
         flex-direction: column;
         align-items: center;
       }
-
       .ad {
         width: 100%;
       }
@@ -113,144 +107,186 @@
 
 <body>
 
-  <div class="container-wrapper">
-    <!-- Left Ad -->
-    <div class="ad">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-5315525753847749"
-           data-ad-slot="1111111111"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+<div class="container-wrapper">
+  <!-- Left Ad -->
+  <div class="ad">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5315525753847749"
+         data-ad-slot="1111111111"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Credit Card Payoff Calculator</h1>
+
+    <div class="instructions">
+      <strong>How it works:</strong>
+      <ul>
+        <li>Enter your current credit card balance.</li>
+        <li>Enter your card APR (interest rate).</li>
+        <li>Enter your minimum monthly payment.</li>
+        <li>Enter the date you want to be debt-free by.</li>
+        <li>Click "Calculate" to see the required monthly payment and extra payment needed.</li>
+      </ul>
     </div>
 
-    <!-- Main Content -->
-    <div class="container">
-      <h1>Credit Card Payoff Calculator</h1>
+    <form id="calculatorForm">
+      <label for="balance">Current Balance ($)</label>
+      <input type="number" id="balance" required>
 
-      <div class="instructions">
-        <strong>How it works:</strong>
-        <ul>
-          <li>Enter your current credit card balance.</li>
-          <li>Enter your card APR (interest rate).</li>
-          <li>Enter your minimum monthly payment.</li>
-          <li>Enter the date you want to be debt-free by.</li>
-          <li>Click "Calculate" to see the required monthly payment and extra payment needed.</li>
-        </ul>
-      </div>
+      <label for="apr">APR (%)</label>
+      <input type="number" step="0.01" id="apr" required>
 
-      <form id="calculatorForm">
-        <label for="balance">Current Balance ($)</label>
-        <input type="number" id="balance" required>
+      <label for="minPayment">Minimum Payment ($)</label>
+      <input type="number" step="0.01" id="minPayment" required>
 
-        <label for="apr">APR (%)</label>
-        <input type="number" step="0.01" id="apr" required>
+      <label for="payoffDate">Desired Payoff Date</label>
+      <input type="date" id="payoffDate" required>
 
-        <label for="minPayment">Minimum Payment ($)</label>
-        <input type="number" step="0.01" id="minPayment" required>
+      <button type="submit">Calculate</button>
+    </form>
 
-        <label for="payoffDate">Desired Payoff Date</label>
-        <input type="date" id="payoffDate" required>
-
-        <button type="submit">Calculate</button>
-      </form>
-
-      <div class="results" id="results" style="display:none;">
-        <p id="monthlyPayment"></p>
-        <p id="extraPayment"></p>
-        <p id="totalInterest"></p>
-        <canvas id="payoffChart" width="400" height="200"></canvas>
-      </div>
-    </div>
-
-    <!-- Right Ad -->
-    <div class="ad">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-5315525753847749"
-           data-ad-slot="2222222222"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+    <div class="results" id="results" style="display:none;">
+      <p id="monthlyPayment"></p>
+      <p id="extraPayment"></p>
+      <p id="totalInterest"></p>
+      <canvas id="payoffChart" width="400" height="200"></canvas>
+      <button id="downloadPDF" style="margin-top:10px;">Download Plan as PDF</button>
+      <button id="sharePlan" style="margin-top:10px;">Share Your Plan</button>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const form = document.getElementById('calculatorForm');
-    const resultsDiv = document.getElementById('results');
-    const monthlyPaymentEl = document.getElementById('monthlyPayment');
-    const extraPaymentEl = document.getElementById('extraPayment');
-    const totalInterestEl = document.getElementById('totalInterest');
-    let chart;
+  <!-- Right Ad -->
+  <div class="ad">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5315525753847749"
+         data-ad-slot="2222222222"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+</div>
 
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
+<script>
+const form = document.getElementById('calculatorForm');
+const resultsDiv = document.getElementById('results');
+const monthlyPaymentEl = document.getElementById('monthlyPayment');
+const extraPaymentEl = document.getElementById('extraPayment');
+const totalInterestEl = document.getElementById('totalInterest');
+let chart;
 
-      const balance = parseFloat(document.getElementById('balance').value);
-      const apr = parseFloat(document.getElementById('apr').value) / 100;
-      const minPayment = parseFloat(document.getElementById('minPayment').value);
-      const payoffDate = new Date(document.getElementById('payoffDate').value);
-      const today = new Date();
+// Handle form submission
+form.addEventListener('submit', function(e){
+  e.preventDefault();
 
-      const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear()) * 12 +
-                  (payoffDate.getMonth() - today.getMonth())));
+  const balance = parseFloat(document.getElementById('balance').value);
+  const apr = parseFloat(document.getElementById('apr').value)/100;
+  const minPayment = parseFloat(document.getElementById('minPayment').value);
+  const payoffDate = new Date(document.getElementById('payoffDate').value);
+  const today = new Date();
 
-      const monthlyRate = apr / 12;
-      const monthlyPayment = (monthlyRate * balance) / (1 - Math.pow(1 + monthlyRate, -months));
-      const extraPayment = monthlyPayment - minPayment;
+  const months = Math.max(1, Math.ceil((payoffDate.getFullYear() - today.getFullYear())*12 + (payoffDate.getMonth() - today.getMonth())));
+  const monthlyRate = apr/12;
+  const monthlyPayment = (monthlyRate*balance)/(1 - Math.pow(1+monthlyRate, -months));
+  const extraPayment = monthlyPayment - minPayment;
 
-      let remainingBalance = balance;
-      let totalInterest = 0;
-      for(let i=0; i<months; i++){
-        const interest = remainingBalance * monthlyRate;
-        totalInterest += interest;
-        remainingBalance = remainingBalance + interest - monthlyPayment;
-      }
+  let remainingBalance = balance;
+  let totalInterest = 0;
+  for(let i=0;i<months;i++){
+    const interest = remainingBalance*monthlyRate;
+    totalInterest += interest;
+    remainingBalance = remainingBalance + interest - monthlyPayment;
+  }
 
-      monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
-      extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
-      totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
+  monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
+  extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
+  totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
 
-      const labels = [];
-      const data = [];
-      let balanceChart = balance;
-      for(let i=0; i<months; i++){
-        balanceChart = balanceChart + balanceChart * monthlyRate - monthlyPayment;
-        labels.push(`Month ${i+1}`);
-        data.push(balanceChart > 0 ? balanceChart.toFixed(2) : 0);
-      }
+  // Prepare chart data
+  const labels = [];
+  const data = [];
+  let balanceChart = balance;
+  for(let i=0;i<months;i++){
+    balanceChart = balanceChart + balanceChart*monthlyRate - monthlyPayment;
+    labels.push(`Month ${i+1}`);
+    data.push(balanceChart>0?balanceChart.toFixed(2):0);
+  }
 
-      if(chart) chart.destroy();
-      const ctx = document.getElementById('payoffChart').getContext('2d');
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Remaining Balance',
-            data: data,
-            borderColor: '#0073e6',
-            fill: true,
-            backgroundColor: 'rgba(0,115,230,0.1)',
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
+  if(chart) chart.destroy();
+  const ctx = document.getElementById('payoffChart').getContext('2d');
+  chart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:labels,
+      datasets:[{
+        label:'Remaining Balance',
+        data:data,
+        borderColor:'#0073e6',
+        fill:true,
+        backgroundColor:'rgba(0,115,230,0.1)',
+        tension:0.3
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  });
 
-      resultsDiv.style.display = 'block';
-    });
-  </script>
+  resultsDiv.style.display='block';
+});
+
+// PDF Download
+document.getElementById('downloadPDF').addEventListener('click', ()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text("Credit Card Payoff Plan", 20, 20);
+
+  doc.setFontSize(12);
+  doc.text(monthlyPaymentEl.textContent, 20, 40);
+  doc.text(extraPaymentEl.textContent, 20, 50);
+  doc.text(totalInterestEl.textContent, 20, 60);
+
+  const canvas = document.getElementById('payoffChart');
+  const imgData = canvas.toDataURL('image/png');
+  doc.addImage(imgData,'PNG',15,70,180,90);
+
+  doc.save('PayoffPlan.pdf');
+});
+
+// Shareable Link
+document.getElementById('sharePlan').addEventListener('click', ()=>{
+  const balance = document.getElementById('balance').value;
+  const apr = document.getElementById('apr').value;
+  const minPayment = document.getElementById('minPayment').value;
+  const payoffDate = document.getElementById('payoffDate').value;
+
+  const shareURL = `${window.location.href.split('?')[0]}?balance=${balance}&apr=${apr}&minPayment=${minPayment}&payoffDate=${payoffDate}`;
+  prompt("Copy this link to share your plan:", shareURL);
+});
+
+// Auto-fill from URL
+window.addEventListener('load', ()=>{
+  const params = new URLSearchParams(window.location.search);
+  if(params.has('balance')) document.getElementById('balance').value = params.get('balance');
+  if(params.has('apr')) document.getElementById('apr').value = params.get('apr');
+  if(params.has('minPayment')) document.getElementById('minPayment').value = params.get('minPayment');
+  if(params.has('payoffDate')) document.getElementById('payoffDate').value = params.get('payoffDate');
+
+  if(params.has('balance')) form.dispatchEvent(new Event('submit'));
+});
+</script>
 </body>
 </html>
-
