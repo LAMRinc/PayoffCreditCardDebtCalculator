@@ -87,16 +87,16 @@ canvas { margin-top:20px; }
 </div>
 
 <div class="guides">
-  <h2>Tips & Strategies</h2>
-  <ul>
-    <li>Pay more than the minimum to reduce interest.</li>
-    <li>Use the Snowball method to pay off smallest debts first.</li>
-    <li>Use the Avalanche method to pay off highest interest first.</li>
-    <li>Negotiate lower APR with your credit card company.</li>
-  </ul>
-  <button id="learnMoreTips" style="margin-top:10px;">Learn More</button>
+<h2>Tips & Strategies</h2>
+<ul>
+<li>Pay more than the minimum to reduce interest.</li>
+<li>Use the Snowball method to pay off smallest debts first.</li>
+<li>Use the Avalanche method to pay off highest interest first.</li>
+<li>Negotiate lower APR with your credit card company.</li>
+</ul>
+<button id="learnMoreTips" style="margin-top:10px;">Learn More</button>
 </div>
-
+</div>
 
 <div class="ad">
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5315525753847749" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -225,6 +225,11 @@ const shareURL = `${window.location.href.split('?')[0]}?balance=${balance}&apr=$
 prompt("Copy this link to share your plan:", shareURL);
 });
 
+// Learn More button
+document.getElementById('learnMoreTips').addEventListener('click', ()=>{
+  window.location.href = 'tips.html';
+});
+
 // Auto-fill from URL
 window.addEventListener('load', ()=>{
 const params = new URLSearchParams(window.location.search);
@@ -237,4 +242,3 @@ if(params.has('balance')) form.dispatchEvent(new Event('submit'));
 </script>
 </body>
 </html>
-
