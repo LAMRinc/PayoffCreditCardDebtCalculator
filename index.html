@@ -71,7 +71,7 @@
       border: none;
       border-radius: 5px;
       font-size: 16px;
-      margin-top: 20px;
+      margin-top: 10px;
       cursor: pointer;
     }
     button:hover {
@@ -157,8 +157,8 @@
       <p id="extraPayment"></p>
       <p id="totalInterest"></p>
       <canvas id="payoffChart" width="400" height="200"></canvas>
-      <button id="downloadPDF" style="margin-top:10px;">Download Plan as PDF</button>
-      <button id="sharePlan" style="margin-top:10px;">Share Your Plan</button>
+      <button id="downloadPDF">Download Plan as PDF</button>
+      <button id="sharePlan">Share Your Plan</button>
     </div>
   </div>
 
@@ -184,7 +184,7 @@ const extraPaymentEl = document.getElementById('extraPayment');
 const totalInterestEl = document.getElementById('totalInterest');
 let chart;
 
-// Handle form submission
+// Form submission
 form.addEventListener('submit', function(e){
   e.preventDefault();
 
@@ -211,7 +211,7 @@ form.addEventListener('submit', function(e){
   extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
   totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
 
-  // Prepare chart data
+  // Chart data
   const labels = [];
   const data = [];
   let balanceChart = balance;
@@ -246,27 +246,23 @@ form.addEventListener('submit', function(e){
   resultsDiv.style.display='block';
 });
 
-// PDF Download
+// Download PDF
 document.getElementById('downloadPDF').addEventListener('click', ()=>{
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-
   doc.setFontSize(16);
   doc.text("Credit Card Payoff Plan", 20, 20);
-
   doc.setFontSize(12);
   doc.text(monthlyPaymentEl.textContent, 20, 40);
   doc.text(extraPaymentEl.textContent, 20, 50);
   doc.text(totalInterestEl.textContent, 20, 60);
-
   const canvas = document.getElementById('payoffChart');
   const imgData = canvas.toDataURL('image/png');
   doc.addImage(imgData,'PNG',15,70,180,90);
-
   doc.save('PayoffPlan.pdf');
 });
 
-// Shareable Link
+// Shareable link
 document.getElementById('sharePlan').addEventListener('click', ()=>{
   const balance = document.getElementById('balance').value;
   const apr = document.getElementById('apr').value;
