@@ -7,10 +7,7 @@
 
   <!-- Google AdSense verification meta tag -->
   <meta name="google-adsense-account" content="ca-pub-5315525753847749">
-
-  <!-- Google AdSense script for ads -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749"
-          crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749" crossorigin="anonymous"></script>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -22,106 +19,31 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f7f9fc;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-    .container-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 20px;
-    }
-    .ad {
-      width: 120px;
-      margin: 10px;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #0073e6;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 15px;
-      background-color: #0073e6;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #005bb5;
-    }
-    .instructions {
-      margin-top: 20px;
-      background: #f0f4ff;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .results {
-      margin-top: 30px;
-      background: #e6f0ff;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    canvas {
-      margin-top: 20px;
-    }
-    @media (max-width: 900px) {
-      .container-wrapper {
-        flex-direction: column;
-        align-items: center;
-      }
-      .ad {
-        width: 100%;
-      }
-    }
+    body { font-family: 'Roboto', sans-serif; background-color: #f7f9fc; color: #333; margin: 0; padding: 0; }
+    .container-wrapper { display: flex; justify-content: center; margin: 20px; }
+    .ad { width: 120px; margin: 10px; text-align: center; }
+    .container { max-width: 600px; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #0073e6; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { width: 100%; padding: 15px; background-color: #0073e6; color: #fff; border: none; border-radius: 5px; font-size: 16px; margin-top: 10px; cursor: pointer; }
+    button:hover { background-color: #005bb5; }
+    .instructions, .guides { margin-top: 20px; background: #f0f4ff; padding: 15px; border-radius: 8px; font-size: 14px; }
+    .results { margin-top: 30px; background: #e6f0ff; padding: 20px; border-radius: 8px; }
+    canvas { margin-top: 20px; }
+    #progressContainer div { height: 15px; margin: 3px 0; border-radius: 5px; }
+    @media (max-width: 900px) { .container-wrapper { flex-direction: column; align-items: center; } .ad { width: 100%; } }
   </style>
 </head>
 
 <body>
 
 <div class="container-wrapper">
-  <!-- Left Ad -->
   <div class="ad">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-5315525753847749"
-         data-ad-slot="1111111111"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5315525753847749" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 
-  <!-- Main Content -->
   <div class="container">
     <h1>Credit Card Payoff Calculator</h1>
 
@@ -152,27 +74,38 @@
       <button type="submit">Calculate</button>
     </form>
 
+    <div style="margin-top:20px;">
+      <label for="budgetPayment">I can pay ($/month)</label>
+      <input type="number" id="budgetPayment" step="0.01">
+      <button type="button" id="calcBudget">Calculate Payoff Date</button>
+      <p id="budgetResult" style="font-weight:bold;"></p>
+    </div>
+
     <div class="results" id="results" style="display:none;">
       <p id="monthlyPayment"></p>
       <p id="extraPayment"></p>
       <p id="totalInterest"></p>
       <canvas id="payoffChart" width="400" height="200"></canvas>
+      <div id="progressContainer"></div>
+      <p id="funHook" style="margin-top:10px; font-weight:bold; color:#0073e6;"></p>
       <button id="downloadPDF">Download Plan as PDF</button>
       <button id="sharePlan">Share Your Plan</button>
     </div>
+
+    <div class="guides">
+      <h2>Tips & Strategies</h2>
+      <ul>
+        <li>Pay more than the minimum to reduce interest.</li>
+        <li>Use the Snowball method to pay off smallest debts first.</li>
+        <li>Use the Avalanche method to pay off highest interest first.</li>
+        <li>Negotiate lower APR with your credit card company.</li>
+      </ul>
+    </div>
   </div>
 
-  <!-- Right Ad -->
   <div class="ad">
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-5315525753847749"
-         data-ad-slot="2222222222"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5315525753847749" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 </div>
 
@@ -184,10 +117,22 @@ const extraPaymentEl = document.getElementById('extraPayment');
 const totalInterestEl = document.getElementById('totalInterest');
 let chart;
 
-// Form submission
+function renderProgressBars(balanceData) {
+  const container = document.getElementById('progressContainer');
+  container.innerHTML = '';
+  const maxBalance = balanceData[0];
+  balanceData.forEach(balance => {
+    const progress = (1 - balance / maxBalance) * 100;
+    const color = progress > 75 ? '#4caf50' : progress > 50 ? '#ff9800' : '#f44336';
+    const bar = document.createElement('div');
+    bar.style.width = `${progress}%`;
+    bar.style.background = color;
+    container.appendChild(bar);
+  });
+}
+
 form.addEventListener('submit', function(e){
   e.preventDefault();
-
   const balance = parseFloat(document.getElementById('balance').value);
   const apr = parseFloat(document.getElementById('apr').value)/100;
   const minPayment = parseFloat(document.getElementById('minPayment').value);
@@ -201,57 +146,47 @@ form.addEventListener('submit', function(e){
 
   let remainingBalance = balance;
   let totalInterest = 0;
+  const balanceData = [];
   for(let i=0;i<months;i++){
     const interest = remainingBalance*monthlyRate;
     totalInterest += interest;
     remainingBalance = remainingBalance + interest - monthlyPayment;
+    balanceData.push(remainingBalance>0?remainingBalance:0);
   }
 
   monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
   extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
   totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
+  document.getElementById('funHook').textContent = `Paying just $${extraPayment.toFixed(2)} extra/month can get you debt-free faster!`;
 
-  // Chart data
-  const labels = [];
-  const data = [];
-  let balanceChart = balance;
-  for(let i=0;i<months;i++){
-    balanceChart = balanceChart + balanceChart*monthlyRate - monthlyPayment;
-    labels.push(`Month ${i+1}`);
-    data.push(balanceChart>0?balanceChart.toFixed(2):0);
-  }
-
+  const labels = balanceData.map((_,i)=>`Month ${i+1}`);
   if(chart) chart.destroy();
   const ctx = document.getElementById('payoffChart').getContext('2d');
-  chart = new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:labels,
-      datasets:[{
-        label:'Remaining Balance',
-        data:data,
-        borderColor:'#0073e6',
-        fill:true,
-        backgroundColor:'rgba(0,115,230,0.1)',
-        tension:0.3
-      }]
-    },
-    options:{
-      responsive:true,
-      plugins:{legend:{display:false}},
-      scales:{y:{beginAtZero:true}}
-    }
-  });
-
+  chart = new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{label:'Remaining Balance',data:balanceData,borderColor:'#0073e6',fill:true,backgroundColor:'rgba(0,115,230,0.1)',tension:0.3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+  
+  renderProgressBars(balanceData);
   resultsDiv.style.display='block';
+});
+
+// Budget → payoff date
+document.getElementById('calcBudget').addEventListener('click', ()=>{
+  const balance = parseFloat(document.getElementById('balance').value);
+  const apr = parseFloat(document.getElementById('apr').value)/100;
+  const monthlyRate = apr/12;
+  let monthlyPay = parseFloat(document.getElementById('budgetPayment').value);
+  if(monthlyPay <= balance*monthlyRate){ alert("Monthly payment too low to ever pay off debt!"); return; }
+  let remaining = balance; let months = 0;
+  while(remaining>0){ remaining = remaining + remaining*monthlyRate - monthlyPay; months++; }
+  const today = new Date();
+  const payoffDate = new Date(today.getFullYear(), today.getMonth()+months, today.getDate());
+  document.getElementById('budgetResult').textContent = `You will be debt-free by: ${payoffDate.toDateString()}`;
 });
 
 // Download PDF
 document.getElementById('downloadPDF').addEventListener('click', ()=>{
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFontSize(16);
-  doc.text("Credit Card Payoff Plan", 20, 20);
+  doc.setFontSize(16); doc.text("Credit Card Payoff Plan", 20, 20);
   doc.setFontSize(12);
   doc.text(monthlyPaymentEl.textContent, 20, 40);
   doc.text(extraPaymentEl.textContent, 20, 50);
@@ -268,7 +203,6 @@ document.getElementById('sharePlan').addEventListener('click', ()=>{
   const apr = document.getElementById('apr').value;
   const minPayment = document.getElementById('minPayment').value;
   const payoffDate = document.getElementById('payoffDate').value;
-
   const shareURL = `${window.location.href.split('?')[0]}?balance=${balance}&apr=${apr}&minPayment=${minPayment}&payoffDate=${payoffDate}`;
   prompt("Copy this link to share your plan:", shareURL);
 });
@@ -280,7 +214,6 @@ window.addEventListener('load', ()=>{
   if(params.has('apr')) document.getElementById('apr').value = params.get('apr');
   if(params.has('minPayment')) document.getElementById('minPayment').value = params.get('minPayment');
   if(params.has('payoffDate')) document.getElementById('payoffDate').value = params.get('payoffDate');
-
   if(params.has('balance')) form.dispatchEvent(new Event('submit'));
 });
 </script>
