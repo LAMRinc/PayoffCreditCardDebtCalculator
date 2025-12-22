@@ -25,7 +25,10 @@ button:hover { background:#005bb5; }
 .results { margin-top:30px; background:#e6f0ff; padding:20px; border-radius:8px; display:flex; flex-wrap:wrap; gap:20px; justify-content:space-between; }
 .results div { flex:1 1 300px; }
 canvas { width:100%; max-width:100%; height:auto; }
+.progress-container { background:#ddd; border-radius:8px; margin-top:10px; }
+.progress-bar { height:20px; background:#0073e6; border-radius:8px; width:0%; text-align:center; color:#fff; font-size:12px; line-height:20px; transition: width 0.5s; }
 .ad { margin:20px 0; text-align:center; }
+.tooltip { cursor: help; border-bottom:1px dotted #0073e6; color:#0073e6; }
 @media(max-width:768px){ .results{flex-direction:column;} }
 </style>
 </head>
@@ -50,11 +53,11 @@ canvas { width:100%; max-width:100%; height:auto; }
   <div class="instructions">
     <strong>How it works:</strong>
     <ul>
-      <li>Enter your current credit card balance.</li>
-      <li>Enter your card APR (interest rate).</li>
-      <li>Enter your minimum monthly payment.</li>
+      <li>Enter your current <span class="tooltip" title="The total balance you owe on your credit card.">balance</span>.</li>
+      <li>Enter your card <span class="tooltip" title="Annual Percentage Rate (interest rate) on your card.">APR</span> (%)</li>
+      <li>Enter your <span class="tooltip" title="The minimum monthly payment required by your credit card company.">minimum payment</span>.</li>
       <li>Enter the date you want to be debt-free by.</li>
-      <li>Click "Calculate" to see the required monthly payment and extra payment needed.</li>
+      <li>Click "Calculate" to see your required payment, extra payment, and charts.</li>
     </ul>
   </div>
 
@@ -86,6 +89,10 @@ canvas { width:100%; max-width:100%; height:auto; }
       <p id="monthlyPayment"></p>
       <p id="extraPayment"></p>
       <p id="totalInterest"></p>
+      <p id="countdown" style="font-weight:bold; color:#28a745;"></p>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar">0%</div>
+      </div>
       <p id="funHook" style="margin-top:10px; font-weight:bold; color:#0073e6;"></p>
       <button id="downloadPDF">Download Plan as PDF</button>
       <button id="sharePlan">Share Your Plan</button>
@@ -128,6 +135,8 @@ window.addEventListener('load', () => {
   const extraPaymentEl = document.getElementById('extraPayment');
   const totalInterestEl = document.getElementById('totalInterest');
   const funHookEl = document.getElementById('funHook');
+  const countdownEl = document.getElementById('countdown');
+  const progressBar = document.getElementById('progressBar');
 
   let lineChart, stackedChart;
 
@@ -162,7 +171,22 @@ window.addEventListener('load', () => {
     monthlyPaymentEl.textContent = `Required Monthly Payment: $${monthlyPayment.toFixed(2)}`;
     extraPaymentEl.textContent = `Extra Payment Above Minimum: $${extraPayment.toFixed(2)}`;
     totalInterestEl.textContent = `Total Interest Paid: $${totalInterest.toFixed(2)}`;
-    funHookEl.textContent = `Paying just $${extraPayment.toFixed(2)} extra/month can get you debt-free faster!`;
+
+    // Countdown to debt-free
+    const payoffTimestamp = new Date(payoffDate.getFullYear(), payoffDate.getMonth(), payoffDate.getDate()).getTime();
+    const now = new Date().getTime();
+    const diff = payoffTimestamp - now;
+    if(diff > 0){
+      const monthsLeft = Math.ceil(diff / (1000*60*60*24*30));
+      countdownEl.textContent = `You will be debt-free in ~${monthsLeft} months!`;
+    } else { countdownEl.textContent = "Congrats! You are already debt-free."; }
+
+    // Progress bar
+    const progressPercent = Math.min(100, ((balance - remaining)/balance)*100);
+    progressBar.style.width = progressPercent.toFixed(1)+'%';
+    progressBar.textContent = progressPercent.toFixed(1)+'%';
+
+    funHookEl.textContent = extraPayment>0?`Paying $${extraPayment.toFixed(2)} extra/month speeds up your payoff!`:'Stick to your plan and pay on time.';
 
     const labels = balanceData.map((_,i)=>`Month ${i+1}`);
 
@@ -195,6 +219,7 @@ window.addEventListener('load', () => {
     resultsDiv.style.display='flex';
   });
 
+  // Budget payoff
   document.getElementById('calcBudget').addEventListener('click', ()=>{
     const balance = parseFloat(document.getElementById('balance').value);
     const apr = parseFloat(document.getElementById('apr').value)/100;
@@ -208,6 +233,7 @@ window.addEventListener('load', () => {
     document.getElementById('budgetResult').textContent = `You will be debt-free by: ${payoffDate.toDateString()}`;
   });
 
+  // PDF download
   document.getElementById('downloadPDF').addEventListener('click', ()=>{
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -224,6 +250,7 @@ window.addEventListener('load', () => {
     doc.save('PayoffPlan.pdf');
   });
 
+  // Shareable link
   document.getElementById('sharePlan').addEventListener('click', ()=>{
     const balance = document.getElementById('balance').value;
     const apr = document.getElementById('apr').value;
@@ -236,6 +263,7 @@ window.addEventListener('load', () => {
   const learnBtn = document.getElementById('learnMoreTips');
   if(learnBtn){ learnBtn.addEventListener('click', () => { window.location.href = 'tips.html'; }); }
 
+  // Auto-fill from URL
   const params = new URLSearchParams(window.location.search);
   if(params.has('balance')) document.getElementById('balance').value = params.get('balance');
   if(params.has('apr')) document.getElementById('apr').value = params.get('apr');
