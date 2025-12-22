@@ -3,180 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>PayOffCreditCardDebtCalculator.com</title>
+<title>Credit Card Payoff Calculator</title>
 
 <!-- Google AdSense -->
-<meta name="google-adsense-account" content="ca-pub-5315525753847749">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5315525753847749"
 crossorigin="anonymous"></script>
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght:300;400;700&display=swap" rel="stylesheet">
-
-<!-- Chart.js -->
+<!-- Fonts & Libraries -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- CSS Files -->
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="theme.css">
 
+<style>
+body { font-family: 'Roboto', sans-serif; background: #f7f9fc; color: #333; margin:0; padding:0; }
+.container-wrapper { display:flex; justify-content:center; flex-wrap:wrap; margin:20px; }
+.container { max-width:800px; background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+h1 { text-align:center; color:#0073e6; }
+label { display:block; margin-top:15px; font-weight:bold; }
+input, select, button { width:100%; padding:10px; margin-top:5px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box; }
+button { background:#0073e6; color:#fff; font-size:16px; margin-top:10px; cursor:pointer; }
+button:hover { background:#005bb5; }
+.ad { width:100%; margin:10px 0; text-align:center; }
+.results, #multiResults { margin-top:20px; background:#e6f0ff; padding:20px; border-radius:8px; }
+canvas { margin-top:20px; }
+.debt-ring-container { position: relative; width: 120px; height: 120px; text-align: center; }
+.debt-ring-container canvas { position: absolute; top:0; left:0; }
+.debt-ring-label { position:absolute; width:100%; top:50%; left:50%; transform:translate(-50%, -50%); font-size:14px; color:#00bfff; }
+#multiProgress { display:flex; gap:20px; flex-wrap:wrap; margin-top:20px; }
+#darkModeToggle { position:fixed; top:20px; right:20px; padding:10px 15px; background:#0073e6; color:#fff; border:none; border-radius:5px; cursor:pointer; z-index:999; }
+#smartTip { font-weight:bold; margin-top:10px; color:#0073e6; text-align:center; font-size:16px; }
+.dark-mode { background:#121212; color:#e0e0e0; }
+.dark-mode input, .dark-mode select, .dark-mode button { background:#1f1f1f; color:#e0e0e0; border:1px solid #333; }
+.dark-mode .container { background:#1a1a1a; }
+@media(max-width:900px){ .container-wrapper{ flex-direction:column; align-items:center; } }
+</style>
 </head>
 <body>
 
-<div id="page-wrapper">
+<button id="darkModeToggle">Dark Mode</button>
 
-    <!-- Left Ad Block -->
-    <aside class="side-ad left-ad">
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-5315525753847749"
-            data-ad-slot="3546968462"
-            data-ad-format="auto"
-            data-full-width-responsive="true">
-        </ins>
-    </aside>
+<div class="container-wrapper">
 
-    <!-- Main Content -->
-    <main>
+<div class="container">
+<h1>Credit Card Payoff Calculator</h1>
 
-        <!-- Header -->
-        <header>
-            <h1>PayOffCreditCardDebtCalculator.com</h1>
-            <button id="darkModeToggle" class="toggle-btn">Dark Mode</button>
-        </header>
-
-        <!-- Dual Hero Panel -->
-        <section id="hero">
-
-            <!-- Progress Panel -->
-            <div id="hero-left">
-                <canvas id="progressRing" width="260" height="260"></canvas>
-                <h2 id="progressTitle">Your Payoff Progress</h2>
-                <p id="progressSummary">Enter your debts to begin tracking.</p>
-            </div>
-
-            <!-- Calculator Panel -->
-            <div id="hero-right">
-
-                <h2>Single Debt Calculator</h2>
-
-                <form id="calculatorForm">
-                    <label>Balance ($)</label>
-                    <input type="number" id="balance" required>
-
-                    <label>APR (%)</label>
-                    <input type="number" id="apr" step="0.01" required>
-
-                    <label>Minimum Payment ($)</label>
-                    <input type="number" id="minPayment" step="0.01" required>
-
-                    <label>Desired Payoff Date</label>
-                    <input type="date" id="payoffDate" required>
-
-                    <button class="main-btn" type="submit">Calculate</button>
-                </form>
-
-                <h3>Budget Payoff</h3>
-                <label>I can pay ($/month)</label>
-                <input type="number" id="budgetPayment" step="0.01">
-                <button id="calcBudget" class="sub-btn">Calculate Date</button>
-                <p id="budgetResult"></p>
-
-            </div>
-        </section>
-
-        <!-- Multi Debt Section -->
-        <section id="multiDebt">
-            <h2>Multi-Debt Snowball & Avalanche</h2>
-
-            <div id="debt-list"></div>
-
-            <button id="addDebt" class="main-btn">Add Another Debt</button>
-
-            <div id="methodSelect">
-                <label><input type="radio" name="method" value="snowball" checked> Snowball (Smallest First)</label>
-                <label><input type="radio" name="method" value="avalanche"> Avalanche (Highest APR First)</label>
-            </div>
-
-            <button id="runMultiDebt" class="main-btn">Run Payoff Strategy</button>
-
-            <div id="multiResults"></div>
-        </section>
-
-        <!-- What If Sliders -->
-        <section id="whatIf">
-            <h2>What If…?</h2>
-
-            <label>Monthly Payment</label>
-            <input type="range" id="whatIfPayment" min="10" max="2000" value="200">
-            <span id="whatIfPaymentVal"></span>
-
-            <label>APR (%)</label>
-            <input type="range" id="whatIfAPR" min="0" max="40" value="15">
-            <span id="whatIfAPRVal"></span>
-
-            <button id="runWhatIf" class="sub-btn">Update</button>
-
-            <p id="whatIfOutput"></p>
-        </section>
-
-        <!-- Charts -->
-        <section id="charts">
-            <h2>Your Charts</h2>
-
-            <canvas id="payoffChart" height="180"></canvas>
-            <canvas id="stackedChart" height="220"></canvas>
-        </section>
-
-        <!-- Exports -->
-        <section id="export">
-            <h2>Export & Share</h2>
-            <button id="downloadPDF" class="main-btn">Download PDF</button>
-            <button id="downloadCSV" class="sub-btn">Download CSV</button>
-            <button id="sharePlan" class="sub-btn">Share Plan</button>
-        </section>
-
-        <!-- Smart Tips -->
-        <section id="tips">
-            <h2>Smart Tips</h2>
-            <p id="smartTip">Enter your details to get recommendations.</p>
-            <button onclick="window.location='tips.html'" class="sub-btn">More Tips</button>
-        </section>
-
-        <!-- Mini Blog -->
-        <section id="blog">
-            <h2>Debt-Free Knowledge Base</h2>
-            <p>Learn powerful strategies, understand APR traps, and upgrade your debt-free journey.</p>
-            <button onclick="window.location='blog.html'" class="main-btn">Visit Blog</button>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            <p>© 2025 PayOffCreditCardDebtCalculator.com — All Rights Reserved</p>
-        </footer>
-
-    </main>
-
-    <!-- Right Ad Block -->
-    <aside class="side-ad right-ad">
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-5315525753847749"
-            data-ad-slot="6887447671"
-            data-ad-format="auto"
-            data-full-width-responsive="true">
-        </ins>
-    </aside>
-
+<div class="instructions">
+<strong>How it works:</strong>
+<ul>
+<li>Enter your current credit card balance.</li>
+<li>Enter your card APR (interest rate).</li>
+<li>Enter your minimum monthly payment.</li>
+<li>Enter the date you want to be debt-free by.</li>
+<li>Click "Calculate" to see required monthly payment and extra payment.</li>
+</ul>
 </div>
 
-<script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+<form id="calculatorForm">
+<label for="balance">Current Balance ($)</label>
+<input type="number" id="balance" required>
 
-<!-- Main App -->
+<label for="apr">APR (%)</label>
+<input type="number" step="0.01" id="apr" required>
+
+<label for="minPayment">Minimum Payment ($)</label>
+<input type="number" step="0.01" id="minPayment" required>
+
+<label for="payoffDate">Desired Payoff Date</label>
+<input type="date" id="payoffDate" required>
+
+<button type="submit">Calculate</button>
+</form>
+
+<div style="margin-top:20px;">
+<label for="budgetPayment">I can pay ($/month)</label>
+<input type="number" id="budgetPayment" step="0.01">
+<button type="button" id="calcBudget">Calculate Payoff Date</button>
+<p id="budgetResult"></p>
+</div>
+
+<div class="results" id="results">
+<canvas id="payoffChart" width="400" height="200"></canvas>
+<canvas id="stackedChart" width="400" height="200"></canvas>
+<canvas id="progressRing" width="150" height="150"></canvas>
+<p id="smartTip"></p>
+</div>
+
+<!-- Multi-Debt Section -->
+<div style="margin-top:30px;">
+<h2>Manage Multiple Debts</h2>
+<div id="debt-list"></div>
+<button id="addDebt">Add Debt</button>
+<div style="margin-top:10px;">
+<label>Method:</label>
+<input type="radio" name="method" value="snowball" checked> Snowball
+<input type="radio" name="method" value="avalanche"> Avalanche
+<button id="runMultiDebt">Run Multi-Debt Payoff</button>
+<div id="multiResults"></div>
+<div id="multiProgress"></div>
+</div>
+</div>
+
+<!-- What-If Simulation -->
+<div style="margin-top:30px;">
+<h2>What-If Simulation</h2>
+<label>Extra Monthly Payment ($)</label>
+<input type="range" min="50" max="1000" value="100" id="whatIfPayment">
+<span id="whatIfPaymentVal"></span>
+
+<label>APR (%)</label>
+<input type="range" min="0" max="30" value="15" id="whatIfAPR">
+<span id="whatIfAPRVal"></span>
+
+<button id="runWhatIf">Run Simulation</button>
+<p id="whatIfOutput"></p>
+</div>
+
+<!-- Export and Share -->
+<div style="margin-top:30px;">
+<button id="downloadPDF">Download PDF</button>
+<button id="downloadCSV">Download CSV</button>
+<button id="sharePlan">Share Your Plan</button>
+</div>
+
+<!-- Google AdSense -->
+<div class="ad">
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5315525753847749" data-ad-slot="6887447671" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+</div> <!-- end container -->
+
+</div> <!-- end wrapper -->
+
 <script src="app.js"></script>
-
 </body>
 </html>
