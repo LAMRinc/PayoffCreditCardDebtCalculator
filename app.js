@@ -1,4 +1,4 @@
-// app.js
+// app.js (Updated with Multi-Debt Animated Rings)
 
 // === GLOBAL VARIABLES ===
 let lineChart, stackedChart;
@@ -20,6 +20,9 @@ const whatIfOutput = document.getElementById('whatIfOutput');
 const progressCanvas = document.getElementById('progressRing');
 const progressCtx = progressCanvas.getContext('2d');
 let progressPercent = 0;
+
+// Multi-debt progress container
+const multiProgressContainer = document.getElementById('multiProgress');
 
 // Load localStorage
 if(localStorage.getItem('debts')) debts = JSON.parse(localStorage.getItem('debts'));
@@ -98,6 +101,7 @@ function renderDebtInputs(){
             debts.splice(idx,1);
             saveDebts();
             renderDebtInputs();
+            renderMultiDebtProgress();
         });
     });
 
@@ -111,6 +115,7 @@ function renderDebtInputs(){
             if(input.classList.contains('debtAPR')) d.apr = parseFloat(input.value);
             if(input.classList.contains('debtMinPayment')) d.minPayment = parseFloat(input.value);
             saveDebts();
+            renderMultiDebtProgress();
         });
     });
 }
@@ -121,6 +126,7 @@ document.getElementById('addDebt').addEventListener('click', ()=>{
     debts.push({name:'', balance:0, apr:0, minPayment:0});
     saveDebts();
     renderDebtInputs();
+    renderMultiDebtProgress();
 });
 document.getElementById('runMultiDebt').addEventListener('click', ()=>{
     const method = document.querySelector('input[name="method"]:checked').value;
@@ -142,6 +148,7 @@ document.getElementById('runMultiDebt').addEventListener('click', ()=>{
     });
     summary += `<strong>Total payoff time: ${totalMonths} months</strong>`;
     resultsDiv.innerHTML = summary;
+    renderMultiDebtProgress();
 });
 
 // Initialize multi debt inputs
@@ -199,7 +206,7 @@ function renderCharts(balanceData, principalData, interestData){
     });
 }
 
-// === PROGRESS RING ===
+// === SINGLE DEBT PROGRESS RING ===
 function updateProgress(totalBalance, remaining){
     progressPercent = Math.min(100, ((totalBalance-remaining)/totalBalance)*100);
     const ctx = progressCtx;
@@ -228,6 +235,66 @@ function updateProgress(totalBalance, remaining){
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`${progressPercent.toFixed(1)}% Paid`, center, center);
+}
+
+// === MULTI-DEBT ANIMATED PROGRESS RINGS ===
+function renderMultiDebtProgress() {
+    multiProgressContainer.innerHTML = ''; // clear previous rings
+
+    debts.forEach((d, idx) => {
+        const div = document.createElement('div');
+        div.className = 'debt-ring-container';
+        const canvas = document.createElement('canvas');
+        canvas.width = 120;
+        canvas.height = 120;
+        const label = document.createElement('div');
+        label.className = 'debt-ring-label';
+        label.innerHTML = `${d.name || 'Debt'}`;
+
+        div.appendChild(canvas);
+        div.appendChild(label);
+        multiProgressContainer.appendChild(div);
+
+        // Animate progress
+        const ctx = canvas.getContext('2d');
+        const percentPaid = Math.min(100, ((d.originalBalance || d.balance) - d.balance)/ (d.originalBalance || d.balance) * 100);
+        d.originalBalance = d.originalBalance || d.balance; // store original
+
+        let progress = 0;
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const center = canvas.width/2;
+            const radius = center - 10;
+
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, Math.PI*2);
+            ctx.strokeStyle = '#1a1f2f';
+            ctx.lineWidth = 10;
+            ctx.stroke();
+
+            // Progress arc
+            ctx.beginPath();
+            ctx.arc(center, center, radius, -Math.PI/2, (-Math.PI/2)+(Math.PI*2)*(progress/100));
+            ctx.strokeStyle = '#00bfff';
+            ctx.lineWidth = 10;
+            ctx.stroke();
+
+            // Text
+            ctx.font = '14px Roboto';
+            ctx.fillStyle = '#00bfff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${progress.toFixed(0)}%`, center, center);
+
+            if(progress < percentPaid) {
+                progress += 1;
+                requestAnimationFrame(animate);
+            }
+        };
+        animate();
+    });
 }
 
 // === EXPORTS ===
